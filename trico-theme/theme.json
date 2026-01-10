@@ -1,0 +1,124 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/theme.json",
+    "version": 2,
+    "settings": {
+        "appearanceTools": true,
+        "layout": {
+            "contentSize": "1200px",
+            "wideSize": "1400px"
+        },
+        "color": {
+            "palette": [
+                {"slug": "primary", "color": "#6366f1", "name": "Primary"},
+                {"slug": "secondary", "color": "#8b5cf6", "name": "Secondary"},
+                {"slug": "accent", "color": "#06b6d4", "name": "Accent"},
+                {"slug": "dark", "color": "#0f172a", "name": "Dark"},
+                {"slug": "light", "color": "#f8fafc", "name": "Light"},
+                {"slug": "gray", "color": "#64748b", "name": "Gray"},
+                {"slug": "success", "color": "#10b981", "name": "Success"},
+                {"slug": "warning", "color": "#f59e0b", "name": "Warning"},
+                {"slug": "error", "color": "#ef4444", "name": "Error"}
+            ],
+            "gradients": [
+                {
+                    "slug": "primary-to-secondary",
+                    "gradient": "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                    "name": "Primary to Secondary"
+                },
+                {
+                    "slug": "dark-fade",
+                    "gradient": "linear-gradient(180deg, #0f172a 0%, #1e293b 100%)",
+                    "name": "Dark Fade"
+                },
+                {
+                    "slug": "glass",
+                    "gradient": "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
+                    "name": "Glass"
+                }
+            ]
+        },
+        "typography": {
+            "fontFamilies": [
+                {
+                    "fontFamily": "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                    "slug": "primary",
+                    "name": "Inter"
+                },
+                {
+                    "fontFamily": "'JetBrains Mono', monospace",
+                    "slug": "mono",
+                    "name": "Mono"
+                }
+            ],
+            "fontSizes": [
+                {"slug": "xs", "size": "0.75rem", "name": "Extra Small"},
+                {"slug": "sm", "size": "0.875rem", "name": "Small"},
+                {"slug": "base", "size": "1rem", "name": "Base"},
+                {"slug": "lg", "size": "1.125rem", "name": "Large"},
+                {"slug": "xl", "size": "1.25rem", "name": "XL"},
+                {"slug": "2xl", "size": "1.5rem", "name": "2XL"},
+                {"slug": "3xl", "size": "1.875rem", "name": "3XL"},
+                {"slug": "4xl", "size": "2.25rem", "name": "4XL"},
+                {"slug": "5xl", "size": "3rem", "name": "5XL"},
+                {"slug": "6xl", "size": "3.75rem", "name": "6XL"}
+            ]
+        },
+        "spacing": {
+            "units": ["px", "rem", "em", "vh", "vw", "%"],
+            "spacingSizes": [
+                {"slug": "10", "size": "0.25rem", "name": "1"},
+                {"slug": "20", "size": "0.5rem", "name": "2"},
+                {"slug": "30", "size": "1rem", "name": "3"},
+                {"slug": "40", "size": "1.5rem", "name": "4"},
+                {"slug": "50", "size": "2rem", "name": "5"},
+                {"slug": "60", "size": "3rem", "name": "6"},
+                {"slug": "70", "size": "4rem", "name": "7"},
+                {"slug": "80", "size": "6rem", "name": "8"}
+            ]
+        },
+        "border": {
+            "radius": true,
+            "color": true,
+            "style": true,
+            "width": true
+        },
+        "shadow": {
+            "presets": [
+                {"slug": "sm", "shadow": "0 1px 2px rgba(0,0,0,0.05)", "name": "Small"},
+                {"slug": "base", "shadow": "0 4px 6px -1px rgba(0,0,0,0.1)", "name": "Base"},
+                {"slug": "lg", "shadow": "0 10px 15px -3px rgba(0,0,0,0.1)", "name": "Large"},
+                {"slug": "xl", "shadow": "0 25px 50px -12px rgba(0,0,0,0.25)", "name": "Extra Large"},
+                {"slug": "glass", "shadow": "0 8px 32px rgba(0,0,0,0.1)", "name": "Glass"}
+            ]
+        },
+        "custom": {
+            "transition": "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+    },
+    "styles": {
+        "spacing": {
+            "blockGap": "1.5rem"
+        },
+        "typography": {
+            "fontFamily": "var(--wp--preset--font-family--primary)",
+            "fontSize": "var(--wp--preset--font-size--base)",
+            "lineHeight": "1.7"
+        },
+        "blocks": {
+            "core/button": {
+                "border": {
+                    "radius": "0.5rem"
+                },
+                "typography": {
+                    "fontWeight": "600"
+                }
+            },
+            "core/heading": {
+                "typography": {
+                    "fontWeight": "700",
+                    "lineHeight": "1.2"
+                }
+            }
+        }
+    }
+}

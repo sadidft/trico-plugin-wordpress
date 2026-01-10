@@ -1,0 +1,74 @@
+/*
+Theme Name: Trico Theme
+Theme URI: https://synpages.synavy.com
+Description: Minimal block-ready theme for Trico AI Assistant. Designed for maximum flexibility and modern web design.
+Version: 1.0.0
+Author: Synavy Team
+Author URI: https://synavy.com
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: trico-theme
+Requires at least: 6.0
+Tested up to: 6.5
+Requires PHP: 7.4
+*/
+
+:root {
+    --trico-primary: #6366f1;
+    --trico-secondary: #8b5cf6;
+    --trico-dark: #0f172a;
+    --trico-light: #f8fafc;
+    --trico-gray: #64748b;
+    --trico-radius: 1rem;
+    --trico-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    --trico-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--trico-dark);
+    background: var(--trico-light);
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    color: var(--trico-primary);
+    text-decoration: none;
+    transition: var(--trico-transition);
+}
+
+a:hover {
+    color: var(--trico-secondary);
+}
+
+.wp-site-blocks {
+    min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+    body.trico-auto-dark {
+        --trico-dark: #f8fafc;
+        --trico-light: #0f172a;
+    }
+}

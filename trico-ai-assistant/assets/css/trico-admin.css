@@ -1,0 +1,396 @@
+/**
+ * Trico Admin Styles
+ */
+
+:root {
+    --trico-primary: #6366f1;
+    --trico-primary-hover: #4f46e5;
+    --trico-secondary: #8b5cf6;
+    --trico-success: #10b981;
+    --trico-warning: #f59e0b;
+    --trico-error: #ef4444;
+    --trico-dark: #0f172a;
+    --trico-gray: #64748b;
+    --trico-light: #f8fafc;
+    --trico-border: #e2e8f0;
+    --trico-radius: 0.75rem;
+    --trico-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+    --trico-shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+}
+
+/* ========================================
+   LAYOUT
+   ======================================== */
+
+.trico-wrap {
+    margin: 20px 20px 20px 0;
+    max-width: 1400px;
+}
+
+.trico-header {
+    margin-bottom: 2rem;
+}
+
+.trico-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--trico-dark);
+    margin: 0;
+}
+
+.trico-logo {
+    font-size: 2.5rem;
+}
+
+.trico-tagline {
+    color: var(--trico-gray);
+    margin: 0.5rem 0 0;
+    font-size: 1.1rem;
+}
+
+.trico-section {
+    margin-bottom: 2rem;
+}
+
+.trico-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--trico-dark);
+    margin-bottom: 1rem;
+}
+
+/* ========================================
+   CARDS
+   ======================================== */
+
+.trico-card {
+    background: #fff;
+    border: 1px solid var(--trico-border);
+    border-radius: var(--trico-radius);
+    padding: 1.5rem;
+    box-shadow: var(--trico-shadow);
+}
+
+.trico-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.trico-card-stat {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+}
+
+.trico-stat-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--trico-primary), var(--trico-secondary));
+    border-radius: 12px;
+}
+
+.trico-stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.trico-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--trico-dark);
+    line-height: 1.2;
+}
+
+.trico-stat-label {
+    font-size: 0.875rem;
+    color: var(--trico-gray);
+}
+
+/* ========================================
+   ACTION CARDS
+   ======================================== */
+
+.trico-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.trico-action-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--trico-border);
+    border-radius: var(--trico-radius);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    box-shadow: var(--trico-shadow);
+}
+
+.trico-action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--trico-shadow-lg);
+    border-color: var(--trico-primary);
+}
+
+.trico-action-card:focus {
+    outline: 2px solid var(--trico-primary);
+    outline-offset: 2px;
+}
+
+.trico-action-primary {
+    background: linear-gradient(135deg, var(--trico-primary), var(--trico-secondary));
+    border: none;
+    color: #fff;
+}
+
+.trico-action-primary:hover {
+    opacity: 0.95;
+}
+
+.trico-action-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.trico-action-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.trico-action-desc {
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+/* ========================================
+   BADGES
+   ======================================== */
+
+.trico-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.trico-badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--trico-success);
+}
+
+.trico-badge-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--trico-warning);
+}
+
+.trico-badge-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--trico-error);
+}
+
+.trico-badge-secondary {
+    background: rgba(100, 116, 139, 0.1);
+    color: var(--trico-gray);
+}
+
+/* ========================================
+   TABLES
+   ======================================== */
+
+.trico-status-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.trico-status-table td {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--trico-border);
+}
+
+.trico-status-table tr:last-child td {
+    border-bottom: none;
+}
+
+.trico-status-table td:last-child {
+    text-align: right;
+}
+
+/* ========================================
+   FORMS
+   ======================================== */
+
+.trico-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.trico-form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--trico-dark);
+}
+
+.trico-form-hint {
+    font-size: 0.875rem;
+    color: var(--trico-gray);
+    margin-top: 0.25rem;
+}
+
+.trico-input,
+.trico-textarea,
+.trico-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--trico-border);
+    border-radius: 0.5rem;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trico-input:focus,
+.trico-textarea:focus,
+.trico-select:focus {
+    outline: none;
+    border-color: var(--trico-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.trico-textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.trico-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.trico-btn-primary {
+    background: linear-gradient(135deg, var(--trico-primary), var(--trico-secondary));
+    color: #fff;
+}
+
+.trico-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.trico-btn-secondary {
+    background: var(--trico-light);
+    color: var(--trico-dark);
+    border: 1px solid var(--trico-border);
+}
+
+.trico-btn-secondary:hover {
+    background: #fff;
+    border-color: var(--trico-gray);
+}
+
+.trico-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.trico-btn-loading {
+    position: relative;
+    color: transparent;
+}
+
+.trico-btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: trico-spin 0.8s linear infinite;
+}
+
+@keyframes trico-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   GENERATOR PAGE
+   ======================================== */
+
+.trico-generator-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.trico-prompt-section {
+    position: sticky;
+    top: 32px;
+}
+
+.trico-preview-frame {
+    width: 100%;
+    height: 600px;
+    border: 1px solid var(--trico-border);
+    border-radius: var(--trico-radius);
+    background: #fff;
+}
+
+@media (max-width: 1200px) {
+    .trico-generator-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .trico-prompt-section {
+        position: static;
+    }
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.trico-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--trico-border);
+    text-align: center;
+    color: var(--trico-gray);
+}
+
+.trico-footer p {
+    margin: 0;
+    font-size: 0.875rem;
+}
