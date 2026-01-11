@@ -469,11 +469,18 @@ jQuery(document).ready(function($) {
     });
     
     function doGenerate(action, $btn) {
-        var originalText = $btn.text();
+        var originalText = $btn.html();
+        var originalBtnClass = $btn.attr('class');
         
-        $btn.addClass('trico-btn-loading').prop('disabled', true).text('');
+        // Show loading state
+        $btn.addClass('trico-btn-loading').prop('disabled', true);
+        $btn.html('<span class="trico-spinner"></span> Generating...');
+        
         $previewBtn.prop('disabled', true);
         $generateBtn.prop('disabled', true);
+        
+        // Show loading overlay
+        showLoadingOverlay();
         
         $.ajax({
             url: tricoAdmin.ajaxUrl,
@@ -488,7 +495,8 @@ jQuery(document).ready(function($) {
                 upload_images: $('input[name="upload_images"]').is(':checked') ? 1 : 0
             },
             success: function(response) {
-                $btn.removeClass('trico-btn-loading').prop('disabled', false).text(originalText);
+                hideLoadingOverlay();
+                $btn.removeClass('trico-btn-loading').prop('disabled', false).html(originalText);
                 $previewBtn.prop('disabled', false);
                 $generateBtn.prop('disabled', false);
                 
@@ -502,17 +510,68 @@ jQuery(document).ready(function($) {
                     if (response.data.edit_url) {
                         showResult(response.data);
                     }
+                    
+                    // Show success message
+                    showNotice('success', '✅ Generation successful! Time: ' + response.data.generation_time + 's');
                 } else {
-                    alert(response.data.message || '<?php _e('An error occurred', 'trico-ai'); ?>');
+                    showNotice('error', '❌ Error: ' + (response.data.message || 'Unknown error'));
                 }
             },
-            error: function() {
-                $btn.removeClass('trico-btn-loading').prop('disabled', false).text(originalText);
+            error: function(xhr, status, error) {
+                hideLoadingOverlay();
+                $btn.removeClass('trico-btn-loading').prop('disabled', false).html(originalText);
                 $previewBtn.prop('disabled', false);
                 $generateBtn.prop('disabled', false);
-                alert('<?php _e('Request failed. Please try again.', 'trico-ai'); ?>');
+                showNotice('error', '❌ Request failed: ' + error);
             }
         });
+    }
+
+    function showLoadingOverlay() {
+        if ($('#trico-loading-overlay').length === 0) {
+            $('body').append(`
+                <div id="trico-loading-overlay" class="trico-loading-overlay">
+                    <div class="trico-loading-content">
+                        <div class="trico-loading-spinner"></div>
+                        <h3>🤖 AI is generating your website...</h3>
+                        <p>This may take 30-60 seconds</p>
+                        <div class="trico-loading-steps">
+                            <div class="step active">📝 Processing prompt</div>
+                            <div class="step">🧠 Generating code</div>
+                            <div class="step">🖼️ Creating images</div>
+                            <div class="step">✨ Finalizing</div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+        $('#trico-loading-overlay').fadeIn(200);
+        
+        // Animate steps
+        var stepIndex = 0;
+        window.loadingInterval = setInterval(function() {
+            stepIndex = (stepIndex + 1) % 4;
+            $('.trico-loading-steps .step').removeClass('active');
+            $('.trico-loading-steps .step').eq(stepIndex).addClass('active');
+        }, 2000);
+    }
+
+    function hideLoadingOverlay() {
+        clearInterval(window.loadingInterval);
+        $('#trico-loading-overlay').fadeOut(200);
+    }
+
+    function showNotice(type, message) {
+        var bgColor = type === 'success' ? '#10b981' : '#ef4444';
+        var $notice = $(`
+            <div class="trico-toast" style="background: ${bgColor}; color: white; padding: 12px 20px; border-radius: 8px; position: fixed; top: 50px; right: 20px; z-index: 99999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); max-width: 400px;">
+                ${message}
+            </div>
+        `);
+        $('body').append($notice);
+        setTimeout(function() {
+            $notice.fadeOut(300, function() { $(this).remove(); });
+        }, 5000);
     }
     
     function showPreview(html) {
