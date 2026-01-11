@@ -44,12 +44,10 @@ class Trico_API_Manager {
             if (isset($limits[$key['index']])) {
                 $key = array_merge($key, $limits[$key['index']]);
                 
-                // Reset daily counter jika sudah ganti hari
                 if (isset($key['last_date']) && $key['last_date'] !== date('Y-m-d')) {
                     $key['requests_today'] = 0;
                 }
                 
-                // Reset rate limit jika sudah lewat waktu
                 if ($key['is_limited'] && !empty($key['limited_until'])) {
                     if (time() > strtotime($key['limited_until'])) {
                         $key['is_limited'] = false;
@@ -105,13 +103,11 @@ class Trico_API_Manager {
             $this->current_index = ($this->current_index + 1) % count($this->keys);
             $key = &$this->keys[$this->current_index];
             
-            // Skip jika key sedang rate limited
             if ($key['is_limited']) {
                 $attempts++;
                 continue;
             }
             
-            // Update usage
             $key['last_used'] = current_time('mysql');
             $key['requests_today']++;
             
@@ -120,7 +116,6 @@ class Trico_API_Manager {
             return $key['key'];
         }
         
-        // Semua key rate limited
         return new WP_Error(
             'all_keys_limited',
             __('All API keys are rate limited. Please wait before trying again.', 'trico-ai')
@@ -171,6 +166,14 @@ class Trico_API_Manager {
         return $status;
     }
     
+    /**
+     * Call Groq API
+     * 
+     * @param array $messages Messages array
+     * @param string|null $model Model ID (null = use default)
+     * @param array $options Additional options
+     * @return array|WP_Error
+     */
     public function call_groq($messages, $model = null, $options = array()) {
         $api_key = $this->get_next_key();
         
@@ -178,8 +181,9 @@ class Trico_API_Manager {
             return $api_key;
         }
         
+        // Use default powerful model if not specified
         if (is_null($model)) {
-            $model = trico()->core->get_model('balanced');
+            $model = 'llama-3.3-70b-versatile';
         }
         
         $defaults = array(
@@ -199,6 +203,8 @@ class Trico_API_Manager {
             'top_p' => $options['top_p'],
             'stream' => $options['stream']
         );
+        
+        trico()->core->log("Calling Groq API with model: {$model}", 'info');
         
         $response = wp_remote_post('https://api.groq.com/openai/v1/chat/completions', array(
             'timeout' => 120,
@@ -230,19 +236,34 @@ class Trico_API_Manager {
             
             trico()->core->log('Groq rate limited, retrying with next key...', 'warning');
             
-            // Retry dengan key lain
             return $this->call_groq($messages, $model, $options);
+        }
+        
+        // Handle deprecated model error
+        if ($code === 400 || $code === 404) {
+            $error_message = isset($data['error']['message']) ? $data['error']['message'] : '';
+            
+            if (strpos($error_message, 'decommissioned') !== false || strpos($error_message, 'not found') !== false) {
+                trico()->core->log("Model {$model} deprecated, falling back to llama-3.3-70b-versatile", 'warning');
+                
+                // Fallback to known working model
+                return $this->call_groq($messages, 'llama-3.3-70b-versatile', $options);
+            }
         }
         
         if ($code !== 200) {
             $error_message = isset($data['error']['message']) 
                 ? $data['error']['message'] 
-                : 'Unknown API error';
+                : 'Unknown API error (HTTP ' . $code . ')';
             
             trico()->core->log('Groq API Error (' . $code . '): ' . $error_message, 'error');
             
             return new WP_Error('groq_api_error', $error_message, array('code' => $code));
         }
+        
+        // Log success
+        $tokens = $data['usage']['total_tokens'] ?? 0;
+        trico()->core->log("Groq API success: {$tokens} tokens used", 'info');
         
         return $data;
     }
