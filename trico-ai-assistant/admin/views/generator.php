@@ -399,6 +399,84 @@ defined('ABSPATH') || exit;
     gap: 1rem;
 }
 
+/* Loading Overlay */
+.trico-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    backdrop-filter: blur(4px);
+}
+
+.trico-loading-content {
+    text-align: center;
+    color: white;
+}
+
+.trico-loading-content h3 {
+    margin: 1.5rem 0 0.5rem;
+    font-size: 1.5rem;
+}
+
+.trico-loading-content p {
+    opacity: 0.7;
+    margin-bottom: 2rem;
+}
+
+.trico-loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: trico-spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes trico-spin {
+    to { transform: rotate(360deg); }
+}
+
+.trico-loading-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.trico-loading-steps .step {
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 0.5rem;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.trico-loading-steps .step.active {
+    opacity: 1;
+    background: rgba(99, 102, 241, 0.5);
+    transform: scale(1.05);
+}
+
+/* Button spinner */
+.trico-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: trico-spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
 @media (max-width: 1200px) {
     .trico-generator-layout {
         grid-template-columns: 1fr;
