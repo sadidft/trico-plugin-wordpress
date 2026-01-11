@@ -44,13 +44,16 @@ class Trico_Generator {
         $system_prompt = Trico_Prompts::get_system_prompt($options['css_framework']);
         $user_prompt = Trico_Prompts::build_generation_prompt($prompt, $options);
         
-        // Step 2: Call AI
+        // Step 2: Call AI with UPDATED MODEL
         $messages = array(
             array('role' => 'system', 'content' => $system_prompt),
             array('role' => 'user', 'content' => $user_prompt)
         );
         
-        $ai_response = trico()->api_manager->call_groq($messages, null, array(
+        // Use powerful model for full page generation
+        $model = trico()->core->get_model_for_task('full_page');
+        
+        $ai_response = trico()->api_manager->call_groq($messages, $model, array(
             'temperature' => 0.7,
             'max_tokens' => 8192
         ));
@@ -85,7 +88,6 @@ class Trico_Generator {
                 $options['upload_images']
             );
             
-            // Replace placeholders in blocks
             $parsed['blocks'] = Trico_Parser::replace_image_placeholders(
                 $parsed['blocks'],
                 $image_urls
@@ -94,7 +96,7 @@ class Trico_Generator {
             $parsed['image_urls'] = $image_urls;
         }
         
-        // Step 6: Create WordPress Page (optional)
+        // Step 6: Create WordPress Page
         $page_id = null;
         
         if ($options['create_page']) {
@@ -120,6 +122,7 @@ class Trico_Generator {
         
         // Step 8: Save to history
         $generation_time = microtime(true) - $start_time;
+        $tokens_used = $ai_response['usage']['total_tokens'] ?? 0;
         
         trico()->database->add_history($project_id, array(
             'prompt' => $prompt,
@@ -127,12 +130,17 @@ class Trico_Generator {
             'css_content' => $parsed['css'],
             'js_content' => $parsed['js'],
             'image_prompts' => json_encode($parsed['images']),
-            'ai_model' => $ai_response['model'] ?? 'unknown',
+            'ai_model' => $model,
             'generation_time' => $generation_time,
-            'tokens_used' => $ai_response['usage']['total_tokens'] ?? 0
+            'tokens_used' => $tokens_used
         ));
         
-        trico()->core->log("Generation complete in {$generation_time}s", 'info');
+        // Calculate cost
+        $input_tokens = $ai_response['usage']['prompt_tokens'] ?? 0;
+        $output_tokens = $ai_response['usage']['completion_tokens'] ?? 0;
+        $estimated_cost = trico()->core->estimate_cost($input_tokens, $output_tokens, $model);
+        
+        trico()->core->log("Generation complete in {$generation_time}s, cost: \${$estimated_cost}", 'info');
         
         return array(
             'success' => true,
@@ -140,7 +148,9 @@ class Trico_Generator {
             'page_id' => $page_id,
             'parsed' => $parsed,
             'generation_time' => $generation_time,
-            'tokens_used' => $ai_response['usage']['total_tokens'] ?? 0
+            'tokens_used' => $tokens_used,
+            'model_used' => $model,
+            'estimated_cost' => $estimated_cost
         );
     }
     
@@ -171,7 +181,6 @@ class Trico_Generator {
         $page_id = wp_insert_post($page_data);
         
         if (!is_wp_error($page_id)) {
-            // Inject custom CSS
             $this->inject_page_css($page_id, $parsed['css'], $options['css_framework']);
         }
         
@@ -186,23 +195,19 @@ class Trico_Generator {
             return;
         }
         
-        // Save CSS to post meta for later injection
         update_post_meta($page_id, '_trico_custom_css', $css);
         
-        // Also update Additional CSS if user is admin
         if (current_user_can('manage_options')) {
             $existing_css = wp_get_custom_css();
             $marker_start = "/* TRICO PAGE {$page_id} START */";
             $marker_end = "/* TRICO PAGE {$page_id} END */";
             
-            // Remove old CSS for this page
             $existing_css = preg_replace(
                 '/' . preg_quote($marker_start, '/') . '.*?' . preg_quote($marker_end, '/') . '/s',
                 '',
                 $existing_css
             );
             
-            // Add new CSS
             $new_css = $existing_css . "\n\n{$marker_start}\n{$css}\n{$marker_end}";
             
             wp_update_custom_css_post($new_css);
@@ -232,7 +237,6 @@ class Trico_Generator {
      * Generate project name from prompt
      */
     private function generate_project_name($prompt) {
-        // Extract first meaningful words
         $prompt = strip_tags($prompt);
         $words = preg_split('/\s+/', $prompt);
         $words = array_slice($words, 0, 5);
@@ -264,10 +268,12 @@ class Trico_Generator {
             array('role' => 'user', 'content' => $prompt)
         );
         
-        // Use fast model for sections
+        // Use balanced model for sections (faster)
+        $model = trico()->core->get_model_for_task('section');
+        
         $ai_response = trico()->api_manager->call_groq(
             $messages,
-            trico()->core->get_model('fast'),
+            $model,
             array('max_tokens' => 4096)
         );
         
@@ -280,12 +286,13 @@ class Trico_Generator {
         
         return array(
             'success' => true,
-            'section' => $parsed
+            'section' => $parsed,
+            'model_used' => $model
         );
     }
     
     /**
-     * Generate SEO metadata for existing content
+     * Generate SEO metadata
      */
     public function generate_seo($content, $business_info = '') {
         $system_prompt = Trico_Prompts::get_seo_prompt();
@@ -301,9 +308,12 @@ class Trico_Generator {
             array('role' => 'user', 'content' => $user_prompt)
         );
         
+        // Use fast model for SEO
+        $model = trico()->core->get_model_for_task('seo');
+        
         $ai_response = trico()->api_manager->call_groq(
             $messages,
-            trico()->core->get_model('fast'),
+            $model,
             array('max_tokens' => 1024)
         );
         
@@ -313,11 +323,9 @@ class Trico_Generator {
         
         $content = $ai_response['choices'][0]['message']['content'] ?? '';
         
-        // Try to parse as JSON
         $seo = json_decode($content, true);
         
         if (json_last_error() !== JSON_ERROR_NONE) {
-            // Fallback to line parsing
             $seo = Trico_Parser::parse("===SEO===\n{$content}\n===SEO_END===")['seo'];
         }
         
@@ -325,7 +333,7 @@ class Trico_Generator {
     }
     
     /**
-     * Get generation preview (without saving)
+     * Preview without saving
      */
     public function preview($prompt, $options = array()) {
         $options['create_page'] = false;
